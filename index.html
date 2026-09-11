@@ -27,7 +27,7 @@ label{font-size:15px;color:#586674;font-weight:700;display:block;white-space:nor
 </style>
 </head>
 <body>
-<header><h1>Form Pembayaran — K2</h1><small id="vendorHeader">PT. WIDRAKREASI VISIKARYA · Gudang Point Coffee Yummy Choice Cibinong</small></header>
+<header><h1>Form Pembayaran — K2</h1><small id="vendorHeader"></small></header>
 <main>
 <section class="card">
 <h2>Data Proyek</h2>
@@ -154,7 +154,7 @@ function renumber(){
 }
 function render(){
  sync(); renumber();
- const vh=document.getElementById("vendorHeader"); if(vh) vh.textContent=(data.vendor||"")+" · Gudang Point Coffee Yummy Choice Cibinong";
+ const vh=document.getElementById("vendorHeader"); if(vh) vh.textContent=(data.vendor||"");
  const c=document.getElementById("stages");c.innerHTML="";
  data.stages.forEach((s,i)=>{
    const row=document.createElement("div");
