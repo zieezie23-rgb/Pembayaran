@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#e30613">
+<link rel="manifest" href="manifest.json">
+<title>Form Pembayaran K2</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#17212b}
+header{background:#e30613;color:#fff;padding:14px 16px;position:sticky;top:0;z-index:10;border-bottom:5px solid #ffd500}
+header h1{font-size:23.75px;margin:0 0 4px} header small{opacity:.9}
+main{max-width:980px;margin:auto;padding:12px}
+.card{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 2px 9px #00000012;border-top:3px solid #0057a8}
+h2{font-size:20px;margin:0 0 10px}.grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:8px;align-items:end}.project-grid{grid-template-columns:1fr;gap:6px}.project-grid>div{display:grid;grid-template-columns:180px minmax(0,1fr);align-items:center;gap:8px}.project-grid label{margin:0}
+label{font-size:13.75px;color:#586674;font-weight:700;display:block;white-space:nowrap}input,select{width:100%;padding:10px;border:1px solid #ccd5de;border-radius:9px;background:#fff;font-size:17.5px;margin-top:4px}
+.money{font-weight:700}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.summary-main{grid-template-columns:repeat(3,1fr)}.summary-main .stat{text-align:center}.stat{background:#f5f8fb;border-radius:10px;padding:10px}.stat b{display:block;font-size:20px;margin-top:3px}.muted{color:#687684;font-size:15px}
+.stage-wrap{overflow-x:auto}.stage-head,.stage-row{display:grid;grid-template-columns:150px 105px 135px minmax(150px,1fr) 42px;gap:6px;align-items:center;min-width:620px}
+.stage-head{font-size:13.75px;color:#687684;font-weight:700;padding:0 4px 5px}
+.stage-row{padding:7px 4px;border-top:1px solid #e8edf2}.stage-row.auto-row{color:#111}.stage-row.auto-row input,.stage-row.auto-row .nominal{color:#111;font-weight:700}.stage-row.retur-row{color:#0000FF}.stage-row.retur-row input,.stage-row.retur-row .nominal,.stage-row.retur-row .muted{color:#0000FF!important;font-weight:700}.stage-row input,.stage-row select{margin:0;padding:8px;font-size:16.25px}.pct-input{text-align:center;font-weight:700}.nominal{text-align:right}
+.stage-row .nominal{font-weight:700;text-align:right;padding-right:6px}
+.btn{border:0;border-radius:9px;padding:10px 12px;font-weight:700;cursor:pointer}.primary{background:#e30613;color:#fff}.secondary{background:#eaf3ff;color:#0057a8}.danger{background:#feecec;color:#b42318}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.export-select{padding:10px 12px;border:1px solid #ccd5de;border-radius:9px;background:#fff;font-size:17.5px}.note{background:#fff8e1;border-left:4px solid #ffd500;padding:10px;border-radius:8px;font-size:12px;line-height:1.45}
+.progress{height:10px;background:#e8edf2;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:#e30613;width:0}
+.badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#eaf3ff;color:#0057a8;font-size:13.75px;font-weight:700}
+@media(max-width:650px){.project-grid{grid-template-columns:1fr;overflow:visible}.project-grid>div{grid-template-columns:125px minmax(0,1fr)}.grid{grid-template-columns:repeat(2,minmax(140px,1fr))}.summary{grid-template-columns:repeat(3,1fr)}.summary-main{grid-template-columns:repeat(3,1fr)}header h1{font-size:21.25px}main{padding:9px}.card{padding:11px}}
+</style>
+</head>
+<body>
+<header><h1>Form Pembayaran — K2</h1><small id="vendorHeader">PT. WIDRAKREASI VISIKARYA · Gudang Point Coffee Yummy Choice Cibinong</small></header>
+<main>
+<section class="card">
+<h2>Data Proyek</h2>
+<div class="grid project-grid">
+<div><label>Customer</label><input id="customer"></div>
+<div><label>Vendor</label><input id="vendor"></div>
+<div><label>No. PP</label><input id="ppNo"></div>
+<div><label>Tanggal PP</label><input id="ppDate" type="date"></div>
+<div><label>No. SPK</label><input id="spkNo"></div>
+<div><label>Tanggal SPK</label><input id="spkDate" type="date"></div>
+<div><label>Jatuh Tempo</label><input id="dueDate" type="date"></div>
+<div><label>Harga / Nilai Kontrak</label><input id="contract" class="money" type="number" min="0"></div>
+<div><label>Less Work</label><input id="less" class="money" type="number" min="0"></div>
+<div><label>Retur / Retensi Maksimal</label><input value="5" readonly></div>
+</div>
+</section>
+
+<section class="card">
+<h2>Ringkasan</h2>
+<div class="summary summary-main">
+<div class="stat"><span class="muted">Nilai Kontrak</span><b id="contractSummary">Rp0</b></div>
+<div class="stat"><span class="muted">Pek. Kurang</span><b id="lessSummary">Rp0</b></div>
+<div class="stat"><span class="muted">Nilai Realisasi</span><b id="paid95">Rp0</b></div>
+</div>
+</section>
+
+<section class="card">
+<h2>Tahap Pembayaran</h2>
+<div class="grid" style="margin-top:10px">
+<div><label>Retur</label><select id="returMode" onchange="setReturMode(this.value)">
+<option value="1">1× — 5%</option>
+<option value="2">2× — 2,5% + 2,5%</option>
+</select></div>
+</div>
+<div class="stage-wrap" style="margin-top:10px">
+<div class="stage-head"><div>Tahap</div><div>% Pembayaran</div><div>Tanggal</div><div>Nominal</div><div></div></div>
+<div id="stages"></div>
+</div>
+<div class="actions" style="margin-top:10px">
+<button class="btn primary" onclick="addStage()">＋ Tambah Tahap</button>
+</div>
+</section>
+
+<section class="card">
+<h2>Aksi</h2>
+<div class="actions">
+<button class="btn primary" onclick="save()">Simpan</button>
+<select id="exportFormat" class="export-select">
+<option value="excel">Export Excel</option>
+<option value="pdf">Export PDF</option>
+</select>
+<button class="btn secondary" onclick="exportSelected()">Export</button>
+<button class="btn danger" onclick="resetData()">Reset</button>
+</div>
+</section>
+</main>
+<script>
+const initial={
+customer:"PT. INTI IDOLA ANUGERAH",vendor:"PT. WIDRAKREASI VISIKARYA",ppNo:"080000/0002350/04/2026",ppDate:"2026-04-07",
+spkNo:"047/SPK/PROJ-IV/2026",spkDate:"2026-04-13",dueDate:"2026-08-14",
+contract:450000000,less:48600000,returMode:1,
+stages:[
+ {name:"Tahap 1 — DP",kind:"DP",pct:10,date:"2026-04-20"},
+ {name:"Tahap 2",kind:"Progress",pct:56.899,date:"2026-06-22"},
+ {name:"Tahap 3",kind:"Progress",pct:26.038,date:"2026-07-20"},
+ {name:"Tahap 4",kind:"Auto",pct:null,date:"2026-08-04"}
+]};
+let data=JSON.parse(localStorage.getItem("k2pay")||"null")||initial;
+
+const ids=["customer","vendor","ppNo","ppDate","spkNo","spkDate","dueDate","contract","less"];
+function rupiah(n){return "Rp " + new Intl.NumberFormat("id-ID",{maximumFractionDigits:0}).format(Math.round(Number(n)||0))}
+function pctText(n){return (Number(n)||0).toLocaleString("id-ID",{minimumFractionDigits:(Number(n)%1?1:0),maximumFractionDigits:3})+"%"}
+function esc(s){return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll('"',"&quot;")}
+function load(){ids.forEach(id=>document.getElementById(id).value=data[id]??"");render()}
+function sync(){ids.forEach(id=>data[id]=document.getElementById(id).value);data.contract=Number(data.contract)||0;data.less=Number(data.less)||0}
+function base(){return Math.max(0,(Number(data.contract)||0)-(Number(data.less)||0))}
+function target95(){return base()*.95}
+function priorPct(i){return data.stages.slice(0,i).filter(s=>s.kind==="DP"||s.kind==="Progress").reduce((a,s)=>a+(Number(s.pct)||0),0)}
+function autoPct(i){return Math.max(0,95-priorPct(i))}
+function calcNominal(i){
+ const s=data.stages[i],b=base();
+ if(s.kind==="Auto") return b*autoPct(i)/100;
+ return b*(Number(s.pct)||0)/100;
+}
+function renumber(){
+ let n=2;
+ data.stages.forEach(s=>{if(s.kind==="Progress"){s.name="Tahap "+n;n++}});
+ const a=data.stages.find(s=>s.kind==="Auto");
+ if(a)a.name="Tahap "+n;
+}
+function render(){
+ sync(); renumber();
+ const vh=document.getElementById("vendorHeader"); if(vh) vh.textContent=(data.vendor||"")+" · Gudang Point Coffee Yummy Choice Cibinong";
+ const c=document.getElementById("stages");c.innerHTML="";
+ data.stages.forEach((s,i)=>{
+   const row=document.createElement("div");
+   const isAuto=s.kind==="Auto";
+   row.className="stage-row"+(isAuto?" auto-row":"");
+   row.innerHTML=`
+   <input value="${esc(s.name)}" readonly>
+   <input class="pct-input" type="text" inputmode="decimal" value="${isAuto?"100%":pctText(s.pct??"")}" ${isAuto?"readonly":""} onchange="setS(${i},'pct',this.value)">
+   <input type="date" value="${s.date||""}" onchange="setS(${i},'date',this.value)">
+   <div class="nominal">${rupiah(calcNominal(i))}</div>
+   <button class="btn danger" onclick="delStage(${i})">×</button>`;
+   c.appendChild(row);
+ });
+ // Retur selalu menyambung langsung setelah tahap terakhir.
+ const last=data.stages[data.stages.length-1];
+ const lastName=last?last.name:"Tahap 1";
+ const lastNo=(lastName.match(/\d+/)||[1])[0]*1;
+ const mode=Number(data.returMode||1);
+ if(mode===2){
+   [1,2].forEach(n=>{
+     const row=document.createElement("div");row.className="stage-row retur-row";
+     const retNo=lastNo+n;
+     const retDate=n===1?(data.returDate1||""):(data.returDate2||"");
+     row.innerHTML=`<input value="Tahap ${retNo} — Ret ${n}" readonly>
+       <input class="pct-input" value="2,5%" readonly>
+       <input type="date" value="${retDate}" onchange="data.returDate${n}=this.value;render()">
+       <div class="nominal">${rupiah(base()*.025)}</div>
+       <div class="muted">Retur ${n}</div>`;
+     c.appendChild(row);
+   });
+ }else{
+   const retNo=lastNo+1;
+   const row=document.createElement("div");row.className="stage-row retur-row";
+   row.innerHTML=`<input value="Tahap ${retNo} — Retur" readonly>
+     <input class="pct-input" value="5%" readonly>
+     <input type="date" value="${data.returDate1||""}" onchange="data.returDate1=this.value;render()">
+     <div class="nominal">${rupiah(base()*.05)}</div>
+     <div class="muted">Retur</div>`;
+   c.appendChild(row);
+ }
+ const modeEl=document.getElementById("returMode");if(modeEl)modeEl.value=String(data.returMode||1);
+ document.getElementById("contractSummary").textContent=rupiah(data.contract);
+ const p95=data.stages.filter(s=>s.kind!=="Retur").reduce((a,s,i)=>a+calcNominal(i),0);
+ document.getElementById("paid95").textContent=rupiah(p95);
+ document.getElementById("lessSummary").textContent=rupiah(Math.max(0,(Number(data.contract)||0)-p95));
+
+}
+function setS(i,k,v){if(k==="pct"){data.stages[i].pct=parseFloat(String(v).replace(/%/g,"").replace(/,/g,"."))||0}else data.stages[i][k]=v;render()}
+function addStage(){
+ sync();
+ const auto=data.stages.findIndex(s=>s.kind==="Auto");
+ const n=data.stages.filter(s=>s.kind==="DP"||s.kind==="Progress").length+1;
+ const stage={name:"Tahap "+n,kind:"Progress",pct:0,date:""};
+ data.stages.splice(auto<0?data.stages.length:auto,0,stage);
+ render();
+}
+function delStage(i){
+ if(data.stages[i].kind==="DP"){alert("Tahap 1 — DP tidak dapat dihapus.");return}
+ if(data.stages[i].kind==="Auto"){alert("Tahap terakhir dihitung otomatis dan tidak dapat dihapus.");return}
+ if(confirm("Hapus tahap ini?")){data.stages.splice(i,1);render()}
+}
+function setReturMode(v){data.returMode=Number(v)===2?2:1;render()}
+function save(){sync();localStorage.setItem("k2pay",JSON.stringify(data));alert("Data tersimpan di perangkat.")}
+function exportSelected(){sync();const f=document.getElementById("exportFormat").value; if(f==="pdf") exportPDF(); else exportExcel();}
+function exportRows(){
+  sync(); renumber();
+  const rows=[];
+  rows.push({type:'company',text:data.customer});
+  rows.push({type:'vendor',text:data.vendor});
+  rows.push({type:'work',text:'PEK. ME GUDANG POINT COFFEE YUMMY CHOICE CIBINONG',date:fmtDate(data.ppDate)});
+  rows.push({type:'meta',label:'PP No. :',value:data.ppNo,dateLabel:'Tanggal PP',date:fmtDate(data.ppDate)});
+  rows.push({type:'meta',label:'SPK No. :',value:data.spkNo,dateLabel:'Tanggal SPK',date:fmtDate(data.spkDate)});
+  rows.push({type:'money',label:'Nilai Kontrak :',value:Number(data.contract)||0});
+  rows.push({type:'money',label:'Pek. Kurang :',value:Number(data.less)||0});
+  rows.push({type:'money',label:'Nilai Realisasi :',value:base()});
+  rows.push({type:'section',text:'Pembayaran :'});
+  let total=0;
+  data.stages.forEach((st,i)=>{
+    const nom=calcNominal(i); total+=nom;
+    const p=st.kind==='Auto'?100:(Number(st.pct)||0);
+    rows.push({type:'stage',no:i+1,name:stageExportName(st,i,p),nominal:nom,date:fmtDate(st.date),auto:st.kind==='Auto'});
+  });
+  const lastNo=data.stages.length;
+  const mode=Number(data.returMode||1);
+  if(mode===2){
+    rows.push({type:'stage',no:lastNo+1,name:`Tahap ${lastNo+1} — Ret 1 (2,5%)`,nominal:base()*.025,date:fmtDate(data.returDate1),retur:true});
+    rows.push({type:'stage',no:lastNo+2,name:`Tahap ${lastNo+2} — Ret 2 (2,5%)`,nominal:base()*.025,date:fmtDate(data.returDate2),retur:true});
+  }else{
+    rows.push({type:'stage',no:lastNo+1,name:`Tahap ${lastNo+1} — Retur (5%)`,nominal:base()*.05,date:'',retur:true});
+  }
+  rows.push({type:'total',label:'Total Pembayaran :',value:total});
+  rows.push({type:'sisa',label:'Sisa Pembayaran :',value:Math.max(0,base()-total)});
+  rows.push({type:'foot',text:`JATUH TEMPO TANGGAL ${fmtDate(data.dueDate)}`});
+  rows.push({type:'foot',text:'PEMBAYARAN VIA TRANSFER'});
+  return rows;
+}
+function stageExportName(st,i,p){
+  if(st.kind==='DP') return `Tahap I DP (${pctText(p)})`;
+  if(st.kind==='Auto') return `Tahap ${i+1} (100%)`;
+  return st.name+` (${pctText(p)})`;
+}
+function fmtDate(v){if(!v)return '';const a=String(v).split('-');return a.length===3?`${a[2]}.${a[1]}.${a[0]}`:v}
+function excelEsc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function exportExcel(){
+  const rows=exportRows();
+  let body='';
+  rows.forEach(r=>{
+    if(r.type==='company') body+=`<tr><td colspan="4" class="company">${excelEsc(r.text)}</td></tr>`;
+    else if(r.type==='vendor') body+=`<tr><td colspan="4" class="vendor">${excelEsc(r.text)}</td></tr>`;
+    else if(r.type==='work') body+=`<tr><td colspan="3" class="work">${excelEsc(r.text)}</td><td class="center bold">Tanggal</td></tr>`;
+    else if(r.type==='meta') body+=`<tr class="moneyrow"><td></td><td class="label right">${excelEsc(r.label)}</td><td class="center">${excelEsc(r.value)}</td><td class="center">${excelEsc(r.date)}</td></tr>`;
+    else if(r.type==='money') body+=`<tr class="moneyrow"><td></td><td class="label right">${excelEsc(r.label)}</td><td class="money bold">${excelEsc(formatPlain(r.value))}</td><td></td></tr>`;
+    else if(r.type==='section') body+=`<tr><td colspan="4" class="section bold">${excelEsc(r.text)}</td></tr>`;
+    else if(r.type==='stage') body+=`<tr class="stage ${r.retur?'retur':(r.auto?'auto':'')}"><td class="center">${r.no}</td><td class="${r.retur?'retur':(r.auto?'auto':'')}">${excelEsc(r.name)}</td><td class="money ${r.retur?'retur':(r.auto?'auto':'')}">${excelEsc(formatPlain(r.nominal))}</td><td class="center ${r.retur?'retur':(r.auto?'auto':'')}">${excelEsc(r.date)}</td></tr>`;
+    else if(r.type==='total') body+=`<tr class="moneyrow"><td></td><td class="label right">${excelEsc(r.label)}</td><td class="money bold">${excelEsc(formatPlain(r.value))}</td><td></td></tr>`;
+    else if(r.type==='sisa') body+=`<tr class="moneyrow"><td></td><td class="label right red">${excelEsc(r.label)}</td><td class="money bold red">${excelEsc(formatPlain(r.value))}</td><td></td></tr>`;
+    else if(r.type==='foot') body+=`<tr><td colspan="4" class="foot bold">${excelEsc(r.text)}</td></tr>`;
+  });
+  const html=`<!doctype html><html><head><meta charset="utf-8"><style>
+  @page{size:A4 portrait;margin:12mm}body{margin:0;font-family:Arial,sans-serif;color:#111}table{border-collapse:collapse;table-layout:fixed;width:780px;font-size:12.5pt}col.a{width:7%}col.b{width:43%}col.c{width:32%}col.d{width:18%}td{padding:3px 4px;height:18px;vertical-align:middle;white-space:nowrap}.company,.vendor{font-weight:bold}.work{font-weight:bold;border:1px solid #777}.label{font-weight:bold}.bold{font-weight:bold}.center{text-align:center}.right{text-align:right}.money{text-align:right;mso-number-format:'#,##0';}.section{padding-top:8px;font-weight:bold}.stage td{border:1px solid #777}.stage.first td{border-top:2px solid #444}.stage.last td{border-bottom:2px solid #444}.auto{color:#111;font-weight:bold}.retur{color:#0000FF;font-weight:bold}.red{color:#C00000}.foot{padding-top:8px}.work{padding-top:3px}.meta td,.moneyrow td{border:1px solid #aaa}</style></head><body><table><colgroup><col class="a"><col class="b"><col class="c"><col class="d"></colgroup>${body}</table></body></html>`;
+  const blob=new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=safeFileName(data.customer,'Form_Pembayaran_K2')+'.xls';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function safeFileName(v,fallback){const s=String(v||'').trim().replace(/[\/:*?"<>|]+/g,' ').replace(/\s+/g,' ');return s||fallback}
+function formatPlain(n){return new Intl.NumberFormat('id-ID',{maximumFractionDigits:0}).format(Math.round(Number(n)||0))}
+function exportPDF(){
+  const rows=exportRows();
+  const w=window.open('','_blank'); if(!w){alert('Izinkan pop-up untuk Export PDF.');return}
+  let body='';
+  rows.forEach(r=>{
+    if(r.type==='company') body+=`<tr><td colspan="4" class="company">${excelEsc(r.text)}</td></tr>`;
+    else if(r.type==='vendor') body+=`<tr><td colspan="4" class="vendor">${excelEsc(r.text)}</td></tr>`;
+    else if(r.type==='work') body+=`<tr><td colspan="3" class="work">${excelEsc(r.text)}</td><td class="c bold">Tanggal</td></tr>`;
+    else if(r.type==='meta') body+=`<tr class="meta"><td></td><td class="label r">${excelEsc(r.label)}</td><td class="c">${excelEsc(r.value)}</td><td class="c">${excelEsc(r.date)}</td></tr>`;
+    else if(r.type==='money') body+=`<tr class="moneyrow"><td></td><td class="label r">${excelEsc(r.label)}</td><td class="r bold">${excelEsc(formatPlain(r.value))}</td><td></td></tr>`;
+    else if(r.type==='section') body+=`<tr><td colspan="4" class="section bold">${excelEsc(r.text)}</td></tr>`;
+    else if(r.type==='stage') body+=`<tr class="stage ${r.retur?'retur':(r.auto?'auto':'')}"><td class="c">${r.no}</td><td class="${r.retur?'retur':(r.auto?'auto':'')}">${excelEsc(r.name)}</td><td class="r ${r.retur?'retur':(r.auto?'auto':'')}">${excelEsc(formatPlain(r.nominal))}</td><td class="c ${r.retur?'retur':(r.auto?'auto':'')}">${excelEsc(r.date)}</td></tr>`;
+    else if(r.type==='total') body+=`<tr class="moneyrow"><td></td><td class="label r">${excelEsc(r.label)}</td><td class="r bold">${excelEsc(formatPlain(r.value))}</td><td></td></tr>`;
+    else if(r.type==='sisa') body+=`<tr class="moneyrow"><td></td><td class="label r red">${excelEsc(r.label)}</td><td class="r bold red">${excelEsc(formatPlain(r.value))}</td><td></td></tr>`;
+    else if(r.type==='foot') body+=`<tr><td colspan="4" class="foot bold">${excelEsc(r.text)}</td></tr>`;
+  });
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Form Pembayaran K2</title><style>@page{size:A4 portrait;margin:14mm}body{font-family:Arial,sans-serif;color:#111;font-size:12.5px}table{border-collapse:collapse;width:100%;table-layout:fixed}col.a{width:7%}col.b{width:43%}col.c{width:32%}col.d{width:18%}td{padding:3px 4px;height:18px;vertical-align:middle;white-space:nowrap}.company,.vendor{font-weight:bold}.work{font-weight:bold;border:1px solid #777}.label{font-weight:bold}.bold{font-weight:bold}.c{text-align:center}.r{text-align:right}.stage td{border:1px solid #777}.stage.first td{border-top:2px solid #444}.stage.last td{border-bottom:2px solid #444}.auto{color:#111;font-weight:bold}.retur{color:#0000FF;font-weight:bold}.red{color:#C00000}.section{padding-top:9px}.foot{padding-top:8px}.meta td,.moneyrow td{border:1px solid #aaa}</style></head><body><table><colgroup><col class="a"><col class="b"><col class="c"><col class="d"></colgroup>${body}</table><script>window.onload=function(){setTimeout(function(){window.print()},300)};<\/script></body></html>`);
+  w.document.close();
+}
+function resetData(){if(confirm("Kembalikan contoh K2?")){data=structuredClone(initial);localStorage.removeItem("k2pay");load()}}
+ids.forEach(id=>document.getElementById(id).addEventListener("input",render));
+load();
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+</script>
+</body></html>
