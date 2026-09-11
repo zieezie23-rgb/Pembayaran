@@ -12,10 +12,10 @@ header{background:#e30613;color:#fff;padding:14px 16px;position:sticky;top:0;z-i
 header h1{font-size:23.75px;margin:0 0 4px} header small{opacity:.9}
 main{max-width:980px;margin:auto;padding:12px}
 .card{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 2px 9px #00000012;border-top:3px solid #0057a8}
-h2{font-size:20px;margin:0 0 10px}.grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:8px;align-items:end}.project-grid{grid-template-columns:1fr;gap:6px}.project-grid>div{display:grid;grid-template-columns:180px minmax(0,1fr);align-items:center;gap:8px}.project-grid label{margin:0}
-label{font-size:13.75px;color:#586674;font-weight:700;display:block;white-space:nowrap}input,select{width:100%;padding:10px;border:1px solid #ccd5de;border-radius:9px;background:#fff;font-size:17.5px;margin-top:4px}
+h2{font-size:20px;margin:0 0 10px}.grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:8px;align-items:end}.project-grid{grid-template-columns:1fr;gap:6px}.project-grid>div{display:grid;grid-template-columns:150px minmax(0,1fr);align-items:center;gap:10px}.project-grid label{margin:0}
+label{font-size:13.75px;color:#586674;font-weight:700;display:block;white-space:nowrap}input,select{width:100%;min-width:0;padding:10px;border:1px solid #ccd5de;border-radius:9px;background:#fff;font-size:17.5px;margin-top:4px}
 .money{font-weight:700}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.summary-main{grid-template-columns:repeat(3,1fr)}.summary-main .stat{text-align:center}.stat{background:#f5f8fb;border-radius:10px;padding:10px}.stat b{display:block;font-size:20px;margin-top:3px}.muted{color:#687684;font-size:15px}
-.stage-wrap{overflow-x:auto}.stage-head,.stage-row{display:grid;grid-template-columns:150px 105px 135px minmax(150px,1fr) 42px;gap:6px;align-items:center;min-width:620px}
+.stage-wrap{overflow-x:auto}.stage-head,.stage-row{display:grid;grid-template-columns:150px 105px minmax(150px,1fr) 135px 42px;gap:6px;align-items:center;min-width:620px}
 .stage-head{font-size:13.75px;color:#687684;font-weight:700;padding:0 4px 5px}
 .stage-row{padding:7px 4px;border-top:1px solid #e8edf2}.stage-row.auto-row{color:#111}.stage-row.auto-row input,.stage-row.auto-row .nominal{color:#111;font-weight:700}.stage-row.retur-row{color:#0000FF}.stage-row.retur-row input,.stage-row.retur-row .nominal,.stage-row.retur-row .muted{color:#0000FF!important;font-weight:700}.stage-row input,.stage-row select{margin:0;padding:8px;font-size:16.25px}.pct-input{text-align:center;font-weight:700}.nominal{text-align:right}
 .stage-row .nominal{font-weight:700;text-align:right;padding-right:6px}
@@ -23,7 +23,7 @@ label{font-size:13.75px;color:#586674;font-weight:700;display:block;white-space:
 .actions{display:flex;gap:8px;flex-wrap:wrap}.export-select{padding:10px 12px;border:1px solid #ccd5de;border-radius:9px;background:#fff;font-size:17.5px}.note{background:#fff8e1;border-left:4px solid #ffd500;padding:10px;border-radius:8px;font-size:12px;line-height:1.45}
 .progress{height:10px;background:#e8edf2;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:#e30613;width:0}
 .badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#eaf3ff;color:#0057a8;font-size:13.75px;font-weight:700}
-@media(max-width:650px){.project-grid{grid-template-columns:1fr;overflow:visible}.project-grid>div{grid-template-columns:125px minmax(0,1fr)}.grid{grid-template-columns:repeat(2,minmax(140px,1fr))}.summary{grid-template-columns:repeat(3,1fr)}.summary-main{grid-template-columns:repeat(3,1fr)}header h1{font-size:21.25px}main{padding:9px}.card{padding:11px}}
+@media(max-width:650px){.project-grid{grid-template-columns:1fr;overflow:visible}.project-grid>div{grid-template-columns:120px minmax(0,1fr)}.grid{grid-template-columns:repeat(2,minmax(140px,1fr))}.summary{grid-template-columns:repeat(3,1fr)}.summary-main{grid-template-columns:repeat(3,1fr)}header h1{font-size:21.25px}main{padding:9px}.card{padding:11px}}
 </style>
 </head>
 <body>
@@ -39,8 +39,8 @@ label{font-size:13.75px;color:#586674;font-weight:700;display:block;white-space:
 <div><label>No. SPK</label><input id="spkNo"></div>
 <div><label>Tanggal SPK</label><input id="spkDate" type="date"></div>
 <div><label>Jatuh Tempo</label><input id="dueDate" type="date"></div>
-<div><label>Harga / Nilai Kontrak</label><input id="contract" class="money" type="number" min="0"></div>
-<div><label>Less Work</label><input id="less" class="money" type="number" min="0"></div>
+<div><label>Harga / Nilai Kontrak</label><input id="contract" class="money" type="text" inputmode="numeric"></div>
+<div><label>Pek. Kurang</label><input id="less" class="money" type="text" inputmode="numeric"></div>
 <div><label>Retur / Retensi Maksimal</label><input value="5" readonly></div>
 </div>
 </section>
@@ -63,7 +63,7 @@ label{font-size:13.75px;color:#586674;font-weight:700;display:block;white-space:
 </select></div>
 </div>
 <div class="stage-wrap" style="margin-top:10px">
-<div class="stage-head"><div>Tahap</div><div>% Pembayaran</div><div>Tanggal</div><div>Nominal</div><div></div></div>
+<div class="stage-head"><div>Tahap</div><div>% Pembayaran</div><div>Nominal</div><div>Tanggal</div><div></div></div>
 <div id="stages"></div>
 </div>
 <div class="actions" style="margin-top:10px">
@@ -92,25 +92,41 @@ contract:450000000,less:48600000,returMode:1,
 stages:[
  {name:"Tahap 1 — DP",kind:"DP",pct:10,date:"2026-04-20"},
  {name:"Tahap 2",kind:"Progress",pct:56.899,date:"2026-06-22"},
- {name:"Tahap 3",kind:"Progress",pct:26.038,date:"2026-07-20"},
+ {name:"Tahap 3",kind:"Progress",pct:82.937,date:"2026-07-20"},
  {name:"Tahap 4",kind:"Auto",pct:null,date:"2026-08-04"}
 ]};
 let data=JSON.parse(localStorage.getItem("k2pay")||"null")||initial;
 
 const ids=["customer","vendor","ppNo","ppDate","spkNo","spkDate","dueDate","contract","less"];
 function rupiah(n){return "Rp " + new Intl.NumberFormat("id-ID",{maximumFractionDigits:0}).format(Math.round(Number(n)||0))}
+function parseMoney(v){return Number(String(v??"").replace(/[^0-9-]/g,""))||0}
+function formatMoneyInput(v){return new Intl.NumberFormat("id-ID",{maximumFractionDigits:0}).format(parseMoney(v))}
 function pctText(n){return (Number(n)||0).toLocaleString("id-ID",{minimumFractionDigits:(Number(n)%1?1:0),maximumFractionDigits:3})+"%"}
 function esc(s){return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll('"',"&quot;")}
-function load(){ids.forEach(id=>document.getElementById(id).value=data[id]??"");render()}
-function sync(){ids.forEach(id=>data[id]=document.getElementById(id).value);data.contract=Number(data.contract)||0;data.less=Number(data.less)||0}
+function load(){ids.forEach(id=>{const el=document.getElementById(id);el.value=data[id]??"";if(id==="contract"||id==="less")el.value=formatMoneyInput(el.value)});render()}
+function sync(){ids.forEach(id=>data[id]=document.getElementById(id).value);data.contract=parseMoney(data.contract);data.less=parseMoney(data.less)}
+
+function setupMoneyInputs(){
+  ["contract","less"].forEach(id=>{
+    const el=document.getElementById(id);
+    el.addEventListener("focus",()=>{el.value=parseMoney(el.value)||""});
+    el.addEventListener("blur",()=>{el.value=formatMoneyInput(el.value);sync();render()});
+  });
+}
 function base(){return Math.max(0,(Number(data.contract)||0)-(Number(data.less)||0))}
 function target95(){return base()*.95}
-function priorPct(i){return data.stages.slice(0,i).filter(s=>s.kind==="DP"||s.kind==="Progress").reduce((a,s)=>a+(Number(s.pct)||0),0)}
-function autoPct(i){return Math.max(0,95-priorPct(i))}
+function cumulativePct(i){return data.stages.slice(0,i+1).filter(s=>s.kind==="DP"||s.kind==="Progress").reduce((a,s)=>a+(Number(s.pct)||0),0)}
+function priorPaid(i){return data.stages.slice(0,i).filter(s=>s.kind==="Progress").reduce((a,s)=>a+calcNominal(data.stages.indexOf(s)),0)}
+function priorAllPaid(i){return data.stages.slice(0,i).filter(s=>s.kind==="DP"||s.kind==="Progress").reduce((a,s)=>a+calcNominal(data.stages.indexOf(s)),0)}
+function dpPct(){const dp=data.stages.find(s=>s.kind==="DP");return Math.max(0,Number(dp?.pct)||0)}
+function progressPayablePct(){return Math.max(0,95-dpPct())}
+function autoPct(i){return Math.max(0,100-cumulativePct(i))}
 function calcNominal(i){
- const s=data.stages[i],b=base();
- if(s.kind==="Auto") return b*autoPct(i)/100;
- return b*(Number(s.pct)||0)/100;
+ const s=data.stages[i],b=base(),contract=Number(data.contract)||0;
+ if(s.kind==="DP") return contract*(Number(s.pct)||0)/100;
+ if(s.kind==="Auto") return Math.max(0,target95()-priorAllPaid(i));
+ const cumulative=cumulativePct(i);
+ return Math.max(0,b*cumulative*progressPayablePct()/100-priorPaid(i));
 }
 function renumber(){
  let n=2;
@@ -129,8 +145,8 @@ function render(){
    row.innerHTML=`
    <input value="${esc(s.name)}" readonly>
    <input class="pct-input" type="text" inputmode="decimal" value="${isAuto?"100%":pctText(s.pct??"")}" ${isAuto?"readonly":""} onchange="setS(${i},'pct',this.value)">
-   <input type="date" value="${s.date||""}" onchange="setS(${i},'date',this.value)">
    <div class="nominal">${rupiah(calcNominal(i))}</div>
+   <input type="date" value="${s.date||""}" onchange="setS(${i},'date',this.value)">
    <button class="btn danger" onclick="delStage(${i})">×</button>`;
    c.appendChild(row);
  });
@@ -146,8 +162,8 @@ function render(){
      const retDate=n===1?(data.returDate1||""):(data.returDate2||"");
      row.innerHTML=`<input value="Tahap ${retNo} — Ret ${n}" readonly>
        <input class="pct-input" value="2,5%" readonly>
-       <input type="date" value="${retDate}" onchange="data.returDate${n}=this.value;render()">
        <div class="nominal">${rupiah(base()*.025)}</div>
+       <input type="date" value="${retDate}" onchange="data.returDate${n}=this.value;render()">
        <div class="muted">Retur ${n}</div>`;
      c.appendChild(row);
    });
@@ -156,8 +172,8 @@ function render(){
    const row=document.createElement("div");row.className="stage-row retur-row";
    row.innerHTML=`<input value="Tahap ${retNo} — Retur" readonly>
      <input class="pct-input" value="5%" readonly>
-     <input type="date" value="${data.returDate1||""}" onchange="data.returDate1=this.value;render()">
      <div class="nominal">${rupiah(base()*.05)}</div>
+     <input type="date" value="${data.returDate1||""}" onchange="data.returDate1=this.value;render()">
      <div class="muted">Retur</div>`;
    c.appendChild(row);
  }
@@ -165,7 +181,7 @@ function render(){
  document.getElementById("contractSummary").textContent=rupiah(data.contract);
  const p95=data.stages.filter(s=>s.kind!=="Retur").reduce((a,s,i)=>a+calcNominal(i),0);
  document.getElementById("paid95").textContent=rupiah(p95);
- document.getElementById("lessSummary").textContent=rupiah(Math.max(0,(Number(data.contract)||0)-p95));
+ document.getElementById("lessSummary").textContent=rupiah(Number(data.less)||0);
 
 }
 function setS(i,k,v){if(k==="pct"){data.stages[i].pct=parseFloat(String(v).replace(/%/g,"").replace(/,/g,"."))||0}else data.stages[i][k]=v;render()}
@@ -186,7 +202,10 @@ function setReturMode(v){data.returMode=Number(v)===2?2:1;render()}
 function save(){sync();localStorage.setItem("k2pay",JSON.stringify(data));alert("Data tersimpan di perangkat.")}
 function exportSelected(){sync();const f=document.getElementById("exportFormat").value; if(f==="pdf") exportPDF(); else exportExcel();}
 function exportRows(){
-  sync(); renumber();
+  sync();
+  data.contract=parseMoney(document.getElementById('contract').value);
+  data.less=parseMoney(document.getElementById('less').value);
+  renumber();
   const rows=[];
   rows.push({type:'company',text:data.customer});
   rows.push({type:'vendor',text:data.vendor});
@@ -209,7 +228,7 @@ function exportRows(){
     rows.push({type:'stage',no:lastNo+1,name:`Tahap ${lastNo+1} — Ret 1 (2,5%)`,nominal:base()*.025,date:fmtDate(data.returDate1),retur:true});
     rows.push({type:'stage',no:lastNo+2,name:`Tahap ${lastNo+2} — Ret 2 (2,5%)`,nominal:base()*.025,date:fmtDate(data.returDate2),retur:true});
   }else{
-    rows.push({type:'stage',no:lastNo+1,name:`Tahap ${lastNo+1} — Retur (5%)`,nominal:base()*.05,date:'',retur:true});
+    rows.push({type:'stage',no:lastNo+1,name:`Tahap ${lastNo+1} — Retur (5%)`,nominal:base()*.05,date:fmtDate(data.returDate1),retur:true});
   }
   rows.push({type:'total',label:'Total Pembayaran :',value:total});
   rows.push({type:'sisa',label:'Sisa Pembayaran :',value:Math.max(0,base()-total)});
@@ -267,7 +286,7 @@ function exportPDF(){
 }
 function resetData(){if(confirm("Kembalikan contoh K2?")){data=structuredClone(initial);localStorage.removeItem("k2pay");load()}}
 ids.forEach(id=>document.getElementById(id).addEventListener("input",render));
-load();
+load();setupMoneyInputs();
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
 </script>
 </body></html>
