@@ -57,6 +57,10 @@ label{font-size:15px;color:#586674;font-weight:700;display:block;white-space:nor
 <section class="card">
 <h2>Tahap Pembayaran</h2>
 <div class="grid" style="margin-top:10px">
+<div><label>DP</label><select id="dpMode" onchange="setDPMode(this.value)">
+<option value="with">Dengan DP</option>
+<option value="without">Tanpa DP</option>
+</select></div>
 <div><label>Retur</label><select id="returMode" onchange="setReturMode(this.value)">
 <option value="1">1× — 5%</option>
 <option value="2">2× — 2,5% + 2,5%</option>
@@ -104,7 +108,7 @@ label{font-size:15px;color:#586674;font-weight:700;display:block;white-space:nor
 const initial={
 customer:"",vendor:"",ppNo:"",ppDate:"",
 spkNo:"",spkDate:"",dueDate:"",
-contract:0,less:0,returMode:1,
+contract:0,less:0,returMode:1,withDP:true,
 stages:[
  {name:"Tahap 1 — DP",kind:"DP",pct:0,date:""},
  {name:"Tahap 2",kind:"Auto",pct:null,date:""}
@@ -147,10 +151,23 @@ function calcNominal(i){
  return Math.max(0,target-priorProgressPaid(i));
 }
 function renumber(){
- let n=2;
- data.stages.forEach(s=>{if(s.kind==="Progress"){s.name="Tahap "+n;n++}});
+ let n=1;
+ data.stages.forEach(s=>{
+  if(s.kind==="DP"){s.name="Tahap "+n+" — DP";n++}
+  else if(s.kind==="Progress"){s.name="Tahap "+n;n++}
+ });
  const a=data.stages.find(s=>s.kind==="Auto");
  if(a)a.name="Tahap "+n;
+}
+function setDPMode(v){
+ sync();
+ data.withDP=v!=="without";
+ const s0=data.stages[0];
+ if(s0){
+  if(data.withDP&&s0.kind!=="Auto") s0.kind="DP";
+  else if(!data.withDP&&s0.kind==="DP") s0.kind="Progress";
+ }
+ render();
 }
 function render(){
  sync(); renumber();
@@ -195,6 +212,7 @@ function render(){
      <div class="muted">Retur</div>`;
    c.appendChild(row);
  }
+ const dpModeEl=document.getElementById("dpMode");if(dpModeEl)dpModeEl.value=data.withDP===false?"without":"with";
  const modeEl=document.getElementById("returMode");if(modeEl)modeEl.value=String(data.returMode||1);
  document.getElementById("contractSummary").textContent=rupiah(data.contract);
  document.getElementById("paid95").textContent=rupiah(base());
@@ -233,7 +251,7 @@ function exportRows(){
   rows.push({type:'meta',label:'PP No. :',value:data.ppNo,dateLabel:'Tanggal PP',date:fmtDate(data.ppDate)});
   rows.push({type:'meta',label:'SPK No. :',value:data.spkNo,dateLabel:'Tanggal SPK',date:fmtDate(data.spkDate)});
   rows.push({type:'money',label:'Nilai Kontrak :',value:Number(data.contract)||0});
-  rows.push({type:'money',label:'Pek. Kurang :',value:Number(data.less)||0});
+  if(Number(data.less)) rows.push({type:'money',label:'Pek. Kurang :',value:Number(data.less)||0});
   rows.push({type:'money',label:'Nilai Realisasi :',value:base()});
   rows.push({type:'section',text:'Pembayaran :'});
   let total=0;
